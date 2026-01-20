@@ -64,8 +64,19 @@ copyright: "Copyright &copy; 2025-2026 Alex Towell"
 nav:
   - Home: index.md
   - Posts:
-      - "Digital Resilience": post/2025-01-long-echo/index.md
-      - "The Toolkit": post/2025-12-16-long-echo-toolkit/index.md
-      - "Bookmarks in Practice": post/2025-12-18-long-echo-bookmarks/index.md
-      - "Photos and Mail": post/2026-01-19-long-echo-photos-mail/index.md
+      - "Long Echo: The Ghost That Speaks": post/2026-01-20-long-echo-ghost-speaks/index.md
+      - "Long Echo Comes Alive: From Philosophy to Implementation": post/2026-01-longecho-orchestration/index.md
+      - "Long Echo: Photos and Mail": post/2026-01-19-long-echo-photos-mail/index.md
+      - "Notes from the Transition": post/2026-01-04-notes-from-the-transition/index.md
+      - "CTK: 1,956 OpenAI Conversations as a Long Echo Archive": post/2025-12-18-ctk-conversation-archive/index.md
+      - "Long Echo in Practice: 5,874 Bookmarks in a Single File": post/2025-12-18-long-echo-bookmarks/index.md
+      - "The Long Echo Toolkit: Preserving Your Digital Life": post/2025-12-16-long-echo-toolkit/index.md
+      - "BTK: Modern Database-First Bookmark Manager": post/2025-11-30-btk/index.md
+      - "Orientation Under Pressure: Notes on a Life Lived Deliberately": post/2025-10-16-orientation-under-pressure/index.md
+      - "EBK: A Modern eBook Management System with AI-Powered Features": post/2025-10-ebk/index.md
+      - "CTK: Conversation Toolkit for Managing AI Conversations": post/2025-10-ctk/index.md
+      - "Post-ASI Archaeology: When Humanity Becomes a Dataset of Origins": post/2025-01-15-post-asi-archaeology/index.md
+      - "Long Echo: Designing for Digital Resilience Across Decades": post/2025-01-long-echo/index.md
+      - "Why I Build Comprehensively in Open Source": post/2024-11-open-source-legacy/index.md
+      - "API Design as Value Imprinting": post/2019-04-api-design-value-imprinting/index.md
   - About: about.md
