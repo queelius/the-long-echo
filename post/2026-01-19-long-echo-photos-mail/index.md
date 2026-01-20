@@ -1,9 +1,4 @@
 ---
-author:
-  name: "Alex Towell"
-  email: "queelius@gmail.com"
-  url: "https://metafunctor.com"
-
 title: "Long Echo: Photos and Mail"
 date: 2026-01-19
 draft: false

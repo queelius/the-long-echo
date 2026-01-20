@@ -1,9 +1,4 @@
 ---
-author:
-  name: "Alex Towell"
-  email: "queelius@gmail.com"
-  url: "https://metafunctor.com"
-
 title: "Long Echo: Designing for Digital Resilience Across Decades"
 date: 2025-01-06
 draft: false
@@ -13,6 +8,10 @@ linked_project: [ctk]
 series: ["the-long-echo"]
 series_weight: 1
 ---
+
+> **Update (January 2026)**: Since this post was written, longecho has evolved
+> from specification to implementation. See [Long Echo Comes Alive](/post/2026-01-longecho-orchestration/)
+> for the current state including `build`, `serve`, and manifest features.
 
 ## Not Resurrection. Not Immortality.
 

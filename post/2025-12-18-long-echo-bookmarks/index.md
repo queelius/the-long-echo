@@ -1,9 +1,4 @@
 ---
-author:
-  name: "Alex Towell"
-  email: "queelius@gmail.com"
-  url: "https://metafunctor.com"
-
 title: "Long Echo in Practice: 5,874 Bookmarks in a Single File"
 date: 2025-12-18
 draft: false

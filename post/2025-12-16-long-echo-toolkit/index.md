@@ -1,9 +1,4 @@
 ---
-author:
-  name: "Alex Towell"
-  email: "queelius@gmail.com"
-  url: "https://metafunctor.com"
-
 title: "The Long Echo Toolkit: Preserving Your Digital Life"
 date: 2025-12-16T18:00:00
 draft: false
