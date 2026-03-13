@@ -1,5 +1,5 @@
 ---
-title: "CTK: A Toolkit for Managing AI Conversations Across Platforms"
+title: "CTK: Conversation Toolkit"
 date: 2025-10-09
 draft: false
 series: ["the-long-echo"]
@@ -7,260 +7,109 @@ series_weight: 22
 tags: ['Python', 'AI', 'LLM', 'conversation-management', 'ChatGPT', 'Claude', 'Copilot', 'TUI', 'SQLite', 'plugin-architecture', 'privacy', 'MCP']
 categories: ['artificial-intelligence', 'tools', 'software-design']
 linked_project: [ctk]
-description: "A plugin-based system for importing, storing, searching, and exporting AI conversations from multiple providers in a unified tree format. Part of the Long Echo project."
+description: "A plugin-based toolkit for managing AI conversations from multiple providers. Import, store, search, and export conversations in a unified tree format. Built for the Long Echo project."
 ---
 
-**[CTK](https://github.com/queelius/ctk)** is a tool I built to solve a specific annoyance: my AI conversations are scattered across ChatGPT, Claude, Copilot, and various local LLMs. They're unsearchable across platforms, at risk of disappearing if a provider changes their export format, and structurally incompatible with each other.
+[CTK](https://github.com/queelius/ctk) manages AI conversations across platforms. Import from ChatGPT, Claude, Copilot, Gemini. Store locally in SQLite. Search, tag, export. Keep everything.
 
-CTK imports from all of these into a single SQLite database with a unified tree representation, then lets you search, organize, and export them.
+## The Problem
 
-## The tree representation
+If you use multiple AI assistants, your conversations are scattered across incompatible platforms, unsearchable, and dependent on companies that may not exist in 20 years. ChatGPT lives in OpenAI's web app. Claude is siloed in Anthropic's interface. Copilot chat history is buried in VS Code storage.
 
-The key insight: all conversations are trees. Linear chats are single-path trees. Branching conversations (like ChatGPT's "regenerate" feature) are multi-path trees:
+You can't search across them. You can't back them up in a unified format. You can't own them.
+
+## The Key Insight: Conversations Are Trees
+
+Most tools treat conversations as linear sequences. They're not. ChatGPT's "regenerate" feature creates branches. Claude supports conversation forking. Even a simple "let me try that again" is a tree operation.
 
 ```
 User: "Write a poem"
-  |-- Assistant (v1): "Roses are red..."
-  +-- Assistant (v2): "In fields of gold..."  [regenerated]
-      +-- User: "Make it longer"
-          +-- Assistant: "In fields of gold, where sunshine..."
+  ├── Assistant (v1): "Roses are red..."
+  └── Assistant (v2): "In fields of gold..."  [regenerated]
+      └── User: "Make it longer"
+          └── Assistant: "In fields of gold, where sunshine..."
 ```
 
-This preserves all branching structure from any provider while giving you a uniform interface for search, export, and analysis.
+CTK stores all conversations as trees. Linear chats are single-path trees. Branching conversations preserve every path. This means you never lose a regeneration, and you can export any path you want.
 
-## Getting started
+## What It Does
 
 ```bash
-git clone https://github.com/queelius/ctk.git
-cd ctk
-make setup
-source .venv/bin/activate
-
-# Import from multiple providers
+# Import from any platform
 ctk import chatgpt_export.json --db my_chats.db
 ctk import claude_export.json --db my_chats.db --format anthropic
 ctk import ~/.vscode/workspaceStorage --db my_chats.db --format copilot
 
 # Search across everything
-ctk search "python async" --db my_chats.db --limit 10
+ctk search "python async" --db my_chats.db
 
-# Interactive TUI
+# Natural language queries via LLM tool calling
+ctk say "find conversations about distributed systems" --db my_chats.db
+
+# Interactive TUI for browsing and chatting
 ctk chat --db my_chats.db
 
-# Export for fine-tuning
+# Export for fine-tuning, archival, or publishing
 ctk export training.jsonl --db my_chats.db --format jsonl
+ctk export archive.html --db my_chats.db --format html5
+ctk export archive/ --db my_chats.db --format markdown
 ```
 
-## Plugin architecture
+### Plugin Architecture
 
-Adding support for a new provider is straightforward. CTK auto-discovers importers and exporters:
+Adding a new provider is one file. Implement `ImporterPlugin`, drop it in the integrations folder, done. Auto-discovered at runtime. No registry, no config.
 
-```python
-# File: ctk/integrations/importers/my_format.py
-from ctk.core.plugin import ImporterPlugin
-from ctk.core.models import ConversationTree, Message, MessageContent, MessageRole
+Currently supported: OpenAI/ChatGPT (full tree), Anthropic/Claude (full tree), GitHub Copilot, Google Gemini, generic JSONL, coding agents (Cursor, Windsurf).
 
-class MyFormatImporter(ImporterPlugin):
-    name = "my_format"
-    description = "Import from My Custom Format"
-    version = "1.0.0"
+### Privacy
 
-    def validate(self, data):
-        """Check if data is your format"""
-        return "my_format_marker" in str(data)
-
-    def import_data(self, data, **kwargs):
-        """Convert data to ConversationTree objects"""
-        tree = ConversationTree(id="conv_1", title="Imported")
-        msg = Message(
-            role=MessageRole.USER,
-            content=MessageContent(text="Hello")
-        )
-        tree.add_message(msg)
-        return [tree]
-```
-
-Drop the file in the integrations folder and it's discovered at runtime.
-
-## Supported providers
-
-### Importers
-
-| Provider | Format | Branch Support | Notes |
-|----------|--------|----------------|-------|
-| **OpenAI (ChatGPT)** | `openai` | Full tree | Preserves all regenerations |
-| **Anthropic (Claude)** | `anthropic` | Full tree | Supports conversation forking |
-| **GitHub Copilot** | `copilot` | Linear | Auto-finds VS Code storage |
-| **Google Gemini** | `gemini` | Partial | Bard conversations |
-| **Generic JSONL** | `jsonl` | Linear | For local LLMs (Ollama, LM Studio) |
-| **Coding Agents** | `coding_agent` | Linear | Cursor, Windsurf, etc. |
-
-### Exporters
-
-| Format | Use Case |
-|--------|----------|
-| **JSONL** | Fine-tuning datasets |
-| **JSON** | Backup, transfer between databases |
-| **Markdown** | Documentation, sharing |
-| **HTML5** | Interactive browsing with search (works offline) |
-
-## Search and discovery
-
-Full-text search across all providers with SQLite FTS:
-
-```bash
-ctk search "machine learning" --db chats.db
-ctk search "python" --db chats.db --source ChatGPT --model GPT-4
-ctk search "async" --db chats.db --tags "code,tutorial" --limit 20
-ctk search "AI" --db chats.db --date-from 2024-01-01 --date-to 2024-12-31
-```
-
-There's also a `say` command that uses LLM tool calling for natural language queries:
-
-```bash
-ctk say "show me starred conversations" --db chats.db
-ctk say "find discussions about async python" --db chats.db
-ctk say "star the last conversation about machine learning" --db chats.db
-```
-
-The LLM interprets your command and calls the appropriate CTK functions. This goes beyond queries: you can star, tag, and export through natural language.
-
-## The interactive TUI
-
-The `chat` command gives you a conversational interface over your entire conversation database:
-
-```bash
-ctk chat --db chats.db
-```
-
-You can ask questions about your history ("What did I discuss with Claude about decorators last month?"), get summaries, find patterns, and perform operations. The LLM has access to the full database through tool calling.
-
-The TUI also provides visual management: browsing with Rich tables, tree views for branching conversations, path navigation, star/pin/archive operations, live chat with any LLM provider, MCP tool support, forking, and message editing.
-
-### TUI commands
-
-```bash
-/browse              # Browse conversations table
-/show <id>           # Show conversation
-/tree <id>           # View tree structure
-/search <query>      # Full-text search
-/say <command>       # Natural language commands
-/star <id>           # Star conversation
-/pin <id>            # Pin conversation
-/archive <id>        # Archive conversation
-/fork                # Fork current conversation
-/regenerate          # Regenerate last message
-/export <format>     # Export current conversation
-/model <name>        # Switch LLM model
-```
-
-## Privacy
-
-Everything is local. No telemetry, no cloud dependencies. There's optional secret masking for when you want to share exports:
+100% local. No telemetry. Optional sanitization strips API keys, passwords, and personal identifiers before export.
 
 ```bash
 ctk export clean_export.jsonl --db chats.db --format jsonl --sanitize
 ```
 
-This strips API keys, passwords, tokens, SSH keys, database URLs, and similar patterns. You can add custom sanitization rules for company-specific patterns.
+### HTML5 Export
 
-## Path selection for branching conversations
+The HTML5 exporter produces a self-contained file with embedded search, tree visualization, and dark mode. No server, no internet, no dependencies. The file works offline in any browser, including continuing conversations with a local LLM directly in the exported HTML.
 
-When exporting, you choose which path to include from branching conversations:
+This is the Long Echo principle made concrete: if CTK disappears tomorrow, the HTML file still works.
 
-```bash
-# Longest path (most comprehensive)
-ctk export out.jsonl --db chats.db --path-selection longest
+### Organization
 
-# First path (original)
-ctk export out.jsonl --db chats.db --path-selection first
-
-# Most recent path (latest regeneration)
-ctk export out.jsonl --db chats.db --path-selection last
-```
-
-This matters for fine-tuning datasets. ChatGPT conversations often have multiple regenerated responses, and you want to pick the right variant.
-
-## Database operations
+Star, pin, archive conversations. Auto-tag with LLM analysis. Create filtered databases for specific purposes.
 
 ```bash
-# Merge databases
+ctk star abc123 --db chats.db
+ctk filter --db all_chats.db --output work.db --tags "work"
 ctk merge source1.db source2.db --output merged.db
-
-# Compare databases
-ctk diff db1.db db2.db
-
-# Create filtered database
-ctk filter --db all_chats.db --output work_chats.db --tags "work"
-ctk filter --db all_chats.db --output starred.db --starred
 ```
 
-## Python API
+### MCP Integration
 
-```python
-from ctk import ConversationDB, registry
+CTK supports Model Context Protocol for tool calling during live chat. Connect file systems, databases, or custom functions. The LLM can use these tools while you're having a conversation.
 
-with ConversationDB("chats.db") as db:
-    results = db.search_conversations("python async")
-    conv = db.load_conversation("conv_id_123")
-    paths = conv.get_all_paths()
-    longest = conv.get_longest_path()
+## The Long Echo Connection
 
-    from ctk import Message, MessageContent, MessageRole
-    msg = Message(
-        role=MessageRole.USER,
-        content=MessageContent(text="New question")
-    )
-    conv.add_message(msg, parent_id="previous_msg_id")
-    db.save_conversation(conv)
+CTK was the first tool I built for Long Echo, and for a while I thought it *was* Long Echo. The hard problems of conversation parsing, unified representation, search, and storage were all solved here.
+
+What Long Echo added was the philosophical framework: graceful degradation, multi-format export, the USB-drive-in-2074 thought experiment. CTK implements that framework for conversations.
+
+```
+Level 1: Full CTK       Semantic search, TUI, RAG
+Level 2: SQLite         Direct queries (CTK gone, database remains)
+Level 3: JSONL          grep through files
+Level 4: HTML           Open in any browser
+Level 5: Markdown       Read in any text editor
 ```
 
-## The Long Echo connection
+Each level works even when all higher levels fail.
 
-CTK was built for the [Long Echo](/post/2025-01-long-echo/) project, which is about preserving digital artifacts for the long term. The export formats are chosen for durability:
-
-- **HTML5**: self-contained, works in any browser offline
-- **Markdown**: plain text with formatting, readable anywhere
-- **JSON**: structured, easy to parse decades later
-
-The physical backup strategy includes USB drives, optical media, multiple cloud providers, and local NAS systems. The goal is that these conversations remain accessible regardless of what happens to any particular platform.
-
-## MCP integration
-
-CTK supports Model Context Protocol for tool calling during live chat:
-
-```bash
-ctk chat --db chats.db --mcp-config mcp.json
-```
-
-The LLM can call external tools (file system operations, web search, database queries, custom functions) during the conversation.
-
-## Development
-
-```bash
-make test              # Run tests
-make test-unit         # Unit tests only
-make test-integration  # Integration tests
-make coverage          # Coverage report
-make format            # black + isort
-make lint              # flake8 + mypy
-```
-
-## Status
-
-**Done**: TUI, Rich output, natural language commands via `say`, star/pin/archive, multiple export formats, MCP tool integration, auto-tagging, database merge/diff.
-
-**In progress**: embeddings and similarity search, test coverage, performance for large databases.
-
-**Planned**: web UI, conversation deduplication, LangChain/LlamaIndex integration, analytics dashboard.
-
-## Links
+## Resources
 
 - **Repository**: [github.com/queelius/ctk](https://github.com/queelius/ctk)
-- **Long Echo**: [blog post](/post/2025-01-long-echo/)
-
-MIT licensed.
+- **Long Echo Philosophy**: [Designing for Digital Resilience](/post/2025-01-long-echo/)
 
 ---
 
-*Part of the Long Echo project. Your conversations with AI are knowledge worth preserving.*
+*Your conversations with AI are valuable knowledge. They deserve better than "hope the company doesn't shut down."*

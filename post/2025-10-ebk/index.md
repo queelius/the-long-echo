@@ -1,5 +1,5 @@
 ---
-title: "EBK: Managing an eBook Library with SQL, AI, and Set Theory"
+title: "EBK: Ebook Toolkit"
 date: 2025-10-13
 draft: false
 series: ["the-long-echo"]
@@ -7,76 +7,52 @@ series_weight: 25
 tags: ['Python', 'ebook-manager', 'SQLite', 'SQLAlchemy', 'full-text-search', 'knowledge-graphs', 'semantic-search', 'MCP', 'AI', 'cli', 'data-management']
 categories: ['software-development', 'data-science', 'artificial-intelligence', 'tools']
 linked_project: [ebk]
-description: "An eBook metadata management tool with a SQLite backend, knowledge graphs, semantic search, and MCP server integration. Part of the Long Echo project."
+description: "EBK is a comprehensive eBook metadata management tool with AI-powered enrichment, semantic search, and knowledge graphs. Part of the Long Echo toolkit."
 ---
 
-**[EBK](https://github.com/queelius/ebk)** is a tool I built because my ebook collection outgrew every existing manager I tried. Different formats, inconsistent metadata, duplicate files, and no way to ask "find all books about X published after Y that I haven't read" without writing custom scripts every time.
+Your books represent decades of accumulated knowledge. Technical references, formative texts, research that shaped your thinking. They deserve better than scattered files on a hard drive with inconsistent metadata and no way to search across them.
 
-EBK treats your library as a queryable database with AI-enhanced discovery. It's part of the [Long Echo](/post/2025-01-long-echo/) toolkit: tools for preserving your digital intellectual life in formats you control.
+[EBK](https://github.com/queelius/ebk) treats your ebook library as a queryable, searchable knowledge base. It's part of the [Long Echo](/post/2025-01-long-echo/) toolkit: tools for preserving your digital intellectual life in formats you control.
 
-## What it does
+## The Core Abstraction
 
-At its core, EBK is a SQLAlchemy + SQLite database with FTS5 full-text search, proper indexing, and transaction safety. When you import a file, it extracts text from PDFs (PyMuPDF with pypdf fallback) and EPUBs (ebooklib), generates overlapping chunks for semantic search, computes SHA256 hashes for deduplication, extracts covers, creates thumbnails, and indexes everything for instant search.
+At its heart, EBK is a SQLAlchemy + SQLite database with a normalized schema. Everything else (CLI, AI features, exports) is layered on top. This means your library metadata is always queryable with standard tools, even if EBK itself disappears.
 
 ```bash
-# Import with auto-extraction
-ebk db-import my-book.pdf ~/my-library
+# Works even without EBK installed
+sqlite3 library.db "SELECT title, author FROM books WHERE favorite = 1"
 ```
 
-Deduplication is hash-based:
+## What It Does
 
-```
-Same file (same hash)          -> Skip (already imported)
-Same book, different format    -> Add as additional format
-Different book                 -> Import as new entry
-```
+```bash
+# Initialize and import
+ebk db-init ~/my-library
+ebk db-import ~/Documents/book.pdf ~/my-library
+ebk db-import-calibre ~/Calibre/Library ~/my-library
 
-Books are stored in hash-prefixed directories (`ab/cd/ef/abcdef123456...pdf`) so you don't end up with massive flat directories.
+# Search with FTS5 full-text search
+ebk db-search "quantum computing" ~/my-library
 
-## The fluent API
-
-```python
-from ebk import Library
-
-lib = Library.open("~/ebooks")
-
-results = (lib.query()
-    .where("language", "en")
-    .where("date", "2020", ">=")
-    .where("subjects", "Python", "contains")
-    .order_by("title")
-    .take(10)
-    .execute())
-
-# Filter and operate
-(lib.filter(lambda e: e.get("rating", 0) >= 4)
-    .tag_all("recommended")
-    .export_to_hugo("/path/to/site", organize_by="subject"))
+# Field-specific queries
+ebk db-search "title:Python author:Knuth tag:programming" ~/my-library
 ```
 
-Complex queries without writing SQL. Filter, transform, and export subsets to different formats.
+Behind a simple import, EBK automatically extracts text from PDFs (PyMuPDF with pypdf fallback) and EPUBs, generates text chunks for semantic search, computes SHA256 hashes for deduplication, extracts covers, and indexes everything in FTS5.
 
-## AI features
+### Deduplication
 
-These are optional but useful for larger collections.
+Same file (same hash) gets skipped. Same book in a different format gets added as an additional format. Different book gets imported as new. Books are stored in hash-prefixed directories for scalability.
 
-### Knowledge graphs
+### AI Enrichment
 
-Using NetworkX, EBK extracts concept relationships across your library:
+EBK can use LLMs to auto-generate tags, categories, and descriptions for books with sparse metadata:
 
-```python
-graph = lib.build_knowledge_graph(
-    extract_entities=True,
-    min_connection_strength=0.3
-)
-graph.visualize(output="library_knowledge.html")
+```bash
+ebk enrich 42  # Enhance metadata with LLM
 ```
 
-This reveals connections you might not notice: "These books about functional programming also discuss category theory."
-
-### Semantic search
-
-Beyond keyword matching, find books by meaning:
+Semantic search finds books by meaning, not just keywords:
 
 ```python
 results = lib.semantic_search(
@@ -85,119 +61,85 @@ results = lib.semantic_search(
 )
 ```
 
-Uses vector embeddings with TF-IDF fallback for offline use.
+Uses vector embeddings when available, TF-IDF fallback for offline use.
 
-### MCP server
+### Knowledge Graphs
 
-```bash
-pip install ebk[mcp]
+Using NetworkX, EBK can extract concept relationships across your library:
+
+```python
+graph = lib.build_knowledge_graph(extract_entities=True)
+graph.visualize(output="library_knowledge.html")
 ```
 
-This lets AI assistants query your library directly, retrieve relevant passages during conversations, and suggest books based on discussion context. You can ask your AI "What books do I have about transformer architectures?" and get accurate results from your own library.
+This reveals connections you didn't know existed. "These books about functional programming also discuss category theory."
 
-## Set-theoretic library operations
+### Fluent Python API
 
-This is one of my favorite features. Merge multiple libraries with set operations:
+```python
+from ebk import Library
 
-```bash
-# Union: all unique books from all libraries
-ebk merge union ~/merged ~/lib1 ~/lib2 ~/lib3
-
-# Intersection: only books present in ALL libraries
-ebk merge intersect ~/common ~/lib1 ~/lib2
-
-# Difference: books in lib1 NOT in lib2
-ebk merge diff ~/lib1-only ~/lib1 ~/lib2
-
-# Symmetric difference: books in exactly ONE library
-ebk merge symdiff ~/unique ~/lib1 ~/lib2
+lib = Library.open("~/ebooks")
+results = (lib.query()
+    .where("language", "en")
+    .where("date", "2020", ">=")
+    .where("subjects", "Python", "contains")
+    .order_by("title")
+    .take(10)
+    .execute())
 ```
 
-Good for consolidating backups, finding duplicates, and identifying unique collections.
+### Export
 
-## Import from anywhere
-
-```bash
-# Calibre library (reads metadata.opf files)
-ebk db-import-calibre ~/Calibre/Library ~/my-library
-
-# Individual files with auto-extraction
-ebk db-import book.pdf ~/my-library
-
-# Batch import
-ebk db-import ~/Downloads/*.epub ~/my-library
-
-# ZIP archives
-ebk import-zip library-backup.zip --output-dir ~/my-library
-```
-
-## Export
-
-### Hugo static site
+Multiple formats for different needs:
 
 ```bash
-ebk export hugo ~/library ~/hugo-site \
-    --jinja \
-    --organize-by subject \
-    --include-covers \
-    --include-files
+ebk export hugo ~/library ~/hugo-site --organize-by subject --include-covers
+ebk export-dag ~/library ~/output  # Navigable symlink directory structure
 ```
 
-Creates a browsable website with subject-based organization, covers, full-text content, and download links.
+The Hugo export creates a browsable website. The DAG export creates a tag-based directory structure where books appear via symlinks under multiple categories. Both work without EBK installed.
 
-### Symlink DAG
+### Set-Theoretic Operations
+
+Merge libraries with mathematical precision:
 
 ```bash
-ebk export-dag ~/library ~/output
+ebk merge union ~/merged ~/lib1 ~/lib2    # All unique books
+ebk merge intersect ~/common ~/lib1 ~/lib2 # Books in ALL libraries
+ebk merge diff ~/unique ~/lib1 ~/lib2      # Books in lib1 NOT in lib2
 ```
 
-Creates a directory structure where tags become folders and books appear via symlinks. Multiple paths lead to the same book. File managers can browse it naturally.
+### MCP Server
 
-## CLI
-
-```bash
-ebk db-init ~/my-library          # Initialize
-ebk db-import book.pdf ~/my-library  # Import
-ebk db-search "quantum computing" ~/my-library  # Search
-ebk db-stats ~/my-library          # Statistics
-```
-
-Rich tables, progress bars, colorized output, JSON mode for scripting.
+EBK includes an MCP server that lets AI assistants query your library directly during conversations. "What books do I have about transformer architectures?" gets an answer from your actual collection.
 
 ## Architecture
 
 ```
-Integrations Layer    <- Streamlit, MCP, Viz
-CLI Layer             <- Typer commands
-Core Library Layer    <- Fluent API
-Import/Export Layer   <- Format handlers
-Database Layer        <- SQLAlchemy + SQLite
+Integrations (Streamlit, MCP, Viz)
+CLI (Typer commands)
+Core Library (Fluent API)
+Import/Export (Format handlers)
+Database (SQLAlchemy + SQLite)
 ```
 
-Core is lightweight with minimal dependencies. Extensions are optional (`pip install ebk[streamlit]`, `pip install ebk[viz]`). Each layer is independently testable.
+Each layer is independently testable. Extensions are optional (`pip install ebk[streamlit]`, `pip install ebk[mcp]`).
 
-## Optional integrations
+## Graceful Degradation
 
-**Streamlit dashboard** (`pip install ebk[streamlit]`): web interface for visual browsing, advanced search, statistics, and batch operations.
+1. **Full EBK**: Rich CLI, semantic search, AI enrichment, knowledge graphs
+2. **SQLite queries**: Direct database access with standard tools
+3. **HTML export**: Browse catalog in any browser
+4. **File system**: The books themselves, always readable
 
-**Visualization tools** (`pip install ebk[viz]`): network graphs showing book relationships, tag clouds, timeline views, author collaboration networks.
+The database stores metadata and search indexes. Your actual files stay wherever you put them.
 
-## Getting started
+## Resources
 
-```bash
-pip install ebk[all]
-ebk db-init ~/my-library
-ebk db-import ~/Documents/book.pdf ~/my-library
-ebk db-search "topic" ~/my-library
-```
-
-## Links
-
-- [GitHub Repository](https://github.com/queelius/ebk)
-- [Project Page](/projects/ebk/)
-
-MIT licensed.
+- **Repository**: [github.com/queelius/ebk](https://github.com/queelius/ebk)
+- **Long Echo Philosophy**: [Designing for Digital Resilience](/post/2025-01-long-echo/)
 
 ---
 
-*Part of the Long Echo project. Your books represent decades of accumulated knowledge. They deserve better than scattered files on a hard drive.*
+*Your books represent significant intellectual investment. They deserve better than a pile of files in a directory.*

@@ -1,242 +1,117 @@
 ---
-title: 'BTK: Modern Database-First Bookmark Manager'
+title: "BTK: Bookmark Toolkit"
 date: 2025-11-30
 draft: false
-series:
-- the-long-echo
+series: ["the-long-echo"]
 series_weight: 24
-tags:
-- Python
-- bookmarks
-- SQLite
-- NLP
-- CLI
-- productivity
-categories:
-- software-development
-- productivity
-description: A database-first bookmark manager with NLP auto-tagging, full-text search, and content caching.
-linked_project:
-- btk
+tags: ['Python', 'bookmarks', 'SQLite', 'NLP', 'CLI', 'productivity']
+categories: ['software-development', 'productivity']
+description: "A database-first bookmark manager with hierarchical tags, content caching, and NLP auto-tagging. Part of the Long Echo toolkit."
 ---
-**[BTK](https://pypi.org/project/bookmark-tk/)** (Bookmark Toolkit) is a bookmark manager that treats bookmarks as structured data rather than flat lists. It sits on top of SQLite with NLP-powered auto-tagging and brings database-level querying to personal bookmark management.
 
-## Why I Built This
+Your bookmarks represent years of intellectual curation. Articles that shaped your thinking, tutorials that taught you skills, references you return to again and again. They deserve better than a flat list in a browser sidebar, siloed per browser, with no metadata and no way to search content.
 
-Browser bookmark managers are terrible:
-- **Flat**: No rich metadata, limited organization
-- **Siloed**: Each browser has its own format
-- **Ephemeral**: Pages go offline, links break
+[BTK](https://github.com/queelius/btk) treats bookmarks as structured data. SQLite database, full-text search, hierarchical tags, content caching, NLP-powered auto-tagging. Part of the [Long Echo](/post/2025-01-long-echo/) toolkit.
 
-Your bookmarks represent years of intellectual curation. Articles that shaped your thinking, tutorials that taught you skills, references you return to over and over. They deserve better than ephemeral browser sync.
+## Why Another Bookmark Manager?
 
-BTK is part of the [Long Echo](/post/2025-01-long-echo/) toolkit: tools for preserving your digital intellectual life in formats you control.
+Browser bookmark managers are flat (no rich metadata), siloed (each browser has its own format), and ephemeral (pages go offline, links break, and you lose the content along with the link).
 
-## Quick Start
+BTK fixes all three: structured SQLite database you own, import from Chrome/Firefox/Safari/HTML/JSON, and content caching that stores page text locally for offline access and full-text search.
+
+## The Shell
+
+BTK includes a virtual filesystem interface. Navigate your bookmarks like a Unix filesystem:
 
 ```bash
-pip install bookmark-tk
-
-# Start the interactive shell (recommended)
-btk shell
-
-# Or use direct CLI commands
-btk bookmark add https://example.com --title "Example" --tags tutorial,web
-btk bookmark list
-btk bookmark search "python"
-
-# Import and export
-btk import html bookmarks.html
-btk export bookmarks.html html --hierarchical
-```
-
-## Interactive Shell
-
-BTK includes a shell with a virtual filesystem interface:
-
-```
 $ btk shell
 
 btk:/$ ls
 bookmarks  tags  starred  archived  recent  domains
 
-btk:/$ cd tags
-btk:/tags$ ls
-programming/  research/  tutorial/  web/
-
-btk:/tags$ cd programming/python
+btk:/$ cd tags/programming/python
 btk:/tags/programming/python$ ls
-3298  4095  5124  5789  (bookmark IDs with this tag)
+3298  4095  5124  5789
 
 btk:/tags/programming/python$ cat 4095/title
 Advanced Python Techniques
 
 btk:/tags/programming/python$ star 4095
-★ Starred bookmark #4095
-
-btk:/tags/programming/python$ cd /bookmarks/4095
-btk:/bookmarks/4095$ tag data-science machine-learning
-✓ Added tags to bookmark #4095
+Starred bookmark #4095
 ```
 
-Shell features:
-- **Virtual filesystem** -- Navigate bookmarks like files and directories
-- **Hierarchical tags** -- Tags like `programming/python/django` create navigable folders
-- **Context-aware commands** -- Commands adapt based on your current location
-- **Unix-like interface** -- Familiar `cd`, `ls`, `pwd`, `mv`, `cp` commands
+Familiar `cd`, `ls`, `pwd`, `mv`, `cp` commands. Hierarchical tags create navigable folder trees. Smart collections (`/unread`, `/popular`, `/broken`, `/untagged`, `/pdfs`) are auto-updating views.
 
-I wanted something that feels like navigating a filesystem because that is the mental model I already have for hierarchical data. If you live in the terminal, this should feel natural.
+## Key Features
 
-## Hierarchical Tags
-
-Organize with nested tags:
+**Hierarchical tags**: Tags like `programming/python/django` create a navigable tree. Query at any level.
 
 ```bash
-# Add with hierarchical tags
-btk bookmark add https://docs.python.org --tags programming/python/docs
-btk bookmark add https://flask.palletsprojects.com --tags programming/python/web
-
-# Query at any level
 btk tag filter programming         # All programming bookmarks
 btk tag filter programming/python  # Python subset
-
-# Tag management
-btk tag list
-btk tag tree                       # Show hierarchy
-btk tag rename old-tag new-tag
+btk tag tree                       # Show full hierarchy
 ```
 
-## Auto-Tagging with NLP
-
-BTK automatically suggests tags based on content:
+**Content caching**: Stores local copies of pages as compressed Markdown. Search within cached content, view offline, survive link rot.
 
 ```bash
-# Preview suggested tags for a bookmark
-btk content auto-tag --id 42
-
-# Apply suggested tags
-btk content auto-tag --id 42 --apply
-
-# Bulk auto-tag with parallel workers
-btk content auto-tag --all --workers 100
-```
-
-The auto-tagger looks at the cached page content and suggests tags from your existing taxonomy. It is not perfect, but it handles the 80% case of "this page is clearly about Python web frameworks" well enough to save significant manual effort.
-
-## Content Caching
-
-Store page content for offline access and full-text search:
-
-```bash
-# Content is cached automatically when adding bookmarks
-btk bookmark add https://example.com
-
-# Manually refresh content
-btk content refresh --id 42            # Specific bookmark
-btk content refresh --all              # All bookmarks
-btk content refresh --all --workers 50 # Parallel refresh
-
-# View cached content
-btk content view 42                    # View markdown in terminal
-btk content view 42 --html             # Open HTML in browser
-
-# Search cached content
+btk content refresh --all --workers 50  # Cache all bookmarks in parallel
 btk bookmark search "specific phrase" --in-content
+btk content view 42 --html              # View cached content
 ```
 
-This is the feature that motivated the whole project. I was tired of bookmarking pages that disappeared six months later. BTK caches the content locally so your bookmarks survive link rot.
+**PDF support**: Extracts and indexes text from PDF bookmarks.
 
-## PDF Support
-
-Extract and index text from PDF bookmarks:
+**NLP auto-tagging**: Analyzes content and suggests tags based on TF-IDF.
 
 ```bash
-# Add PDF bookmark (auto-extracts text)
-btk bookmark add https://arxiv.org/pdf/2301.00001.pdf --tags research,ml
-
-# Search within PDF text
-btk bookmark search "neural network" --in-content
-
-# View extracted text
-btk content view 42
+btk content auto-tag --all --workers 100  # Bulk auto-tag
 ```
 
-## Browser Integration
+**Browser integration**: Import from Chrome, Firefox, Safari, or any HTML/JSON/CSV bookmark export.
 
-Import bookmarks from browsers:
-
-```bash
-# Import bookmarks
-btk import chrome
-btk import firefox --profile default
-btk import html bookmarks.html
-btk import json bookmarks.json
-btk import csv bookmarks.csv
-```
+**Plugin system**: Extend with custom hooks for bookmark lifecycle events.
 
 ## Database Operations
 
 ```bash
-# Use specific database
-btk --db ~/bookmarks.db bookmark list
-
-# Set default database
-btk config set database.path ~/bookmarks.db
-
-# Database management
-btk db info              # Show statistics
-btk db vacuum            # Optimize database
-
-# Deduplication
-btk db dedupe --strategy merge       # Merge duplicate metadata
-btk db dedupe --strategy keep_first  # Keep oldest
-btk db dedupe --preview              # Preview changes
+btk db info               # Statistics
+btk db vacuum             # Optimize
+btk db dedupe --preview   # Find and merge duplicates
 ```
 
-## Export Formats
+## Export
 
 ```bash
-# Export to various formats
-btk export output.html html --hierarchical  # HTML with folder structure
-btk export output.json json                 # JSON format
-btk export output.csv csv                   # CSV format
-btk export output.md markdown               # Markdown with sections
+btk export bookmarks.html html --hierarchical  # Browser-importable
+btk export bookmarks.json json
+btk export bookmarks.md markdown
 ```
 
-## Plugin System
+The HTML export with `--hierarchical` creates a folder structure matching your tag tree. Importable back into any browser.
 
-Extend BTK with custom plugins:
+## Numbers
 
-```python
-from btk.plugins import Plugin, PluginMetadata, PluginPriority
-
-class MyPlugin(Plugin):
-    def get_metadata(self) -> PluginMetadata:
-        return PluginMetadata(
-            name="my-plugin",
-            version="1.0.0",
-            description="Custom functionality",
-            priority=PluginPriority.NORMAL
-        )
-
-    def on_bookmark_added(self, bookmark):
-        # Custom logic when bookmark is added
-        pass
-```
-
-## Architecture
-
-- **Database**: SQLAlchemy ORM with SQLite backend
-- **Testing**: 515 tests, >80% coverage on core modules
-- **Content**: HTML/Markdown conversion, zlib compression, PDF extraction
-
-## Installation
+515 tests, >80% coverage on core modules. Published on PyPI as `bookmark-tk`.
 
 ```bash
 pip install bookmark-tk
 ```
 
+## Graceful Degradation
+
+1. **Full BTK**: Shell, auto-tagging, content caching, web server
+2. **SQLite queries**: `sqlite3 bookmarks.db "SELECT url, title FROM bookmarks WHERE stars = 1"`
+3. **HTML export**: Browse in any browser, import into any browser
+4. **JSON export**: Parse with jq or any tool
+5. **The URLs themselves**: Still just links
+
 ## Resources
 
-- **PyPI**: [pypi.org/project/bookmark-tk/](https://pypi.org/project/bookmark-tk/)
-- **GitHub**: [github.com/queelius/bookmark-tk](https://github.com/queelius/bookmark-tk)
+- **PyPI**: [pypi.org/project/bookmark-tk](https://pypi.org/project/bookmark-tk/)
+- **Repository**: [github.com/queelius/btk](https://github.com/queelius/btk)
+- **Long Echo Philosophy**: [Designing for Digital Resilience](/post/2025-01-long-echo/)
+
+---
+
+*Your bookmarks are intellectual breadcrumbs. BTK makes sure the trail survives.*
