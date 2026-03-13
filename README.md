@@ -15,10 +15,10 @@ Essays on digital legacy, graceful degradation, and designing systems that outla
 | `2025-12-18-ctk-conversation-archive/` | CTK: 1,956 OpenAI Conversations as a Long Echo Archive |
 | `2025-12-18-long-echo-bookmarks/` | Long Echo in Practice: 5,874 Bookmarks in a Single File |
 | `2025-12-16-long-echo-toolkit/` | The Long Echo Toolkit: Preserving Your Digital Life |
-| `2025-11-30-btk/` | BTK: Modern Database-First Bookmark Manager |
-| `2025-10-16-orientation-under-pressure/` | Orientation Under Pressure: Notes on a Life Lived Deliberately |
-| `2025-10-ebk/` | EBK: A Modern eBook Management System with AI-Powered Features |
-| `2025-10-ctk/` | CTK: Conversation Toolkit for Managing AI Conversations |
+| `2025-11-30-btk/` | BTK: Bookmark Toolkit |
+| `2025-10-16-orientation-under-pressure/` | Orientation Under Pressure |
+| `2025-10-ebk/` | EBK: Ebook Toolkit |
+| `2025-10-ctk/` | CTK: Conversation Toolkit |
 | `2025-01-15-post-asi-archaeology/` | Post-ASI Archaeology: When Humanity Becomes a Dataset of Origins |
 | `2025-01-long-echo/` | Long Echo: Designing for Digital Resilience Across Decades |
 | `2024-11-open-source-legacy/` | Why I Build Comprehensively in Open Source |
@@ -26,14 +26,18 @@ Essays on digital legacy, graceful degradation, and designing systems that outla
 
 ## The Core Insight
 
-Systems should fail progressively, not catastrophically. Every tool exports to formats that work at every level—from rich apps down to plain text.
+Systems should fail progressively, not catastrophically. Every tool exports to formats that work at every level, from rich apps down to plain text.
 
 ## Related Projects
 
 - [CTK](https://github.com/queelius/ctk) - Conversation Toolkit
 - [BTK](https://github.com/queelius/btk) - Bookmark Toolkit
-- [EBK](https://github.com/queelius/ebk) - eBook Manager
-- [Long Echo](https://github.com/queelius/longecho) - Long Echo orchestration
+- [EBK](https://github.com/queelius/ebk) - eBook Toolkit
+- [PTK](https://github.com/queelius/ptk) - Photo Toolkit
+- [MTK](https://github.com/queelius/mtk) - Mail Toolkit
+- [JOT](https://github.com/queelius/jot) - Plaintext journal
+- [longecho](https://github.com/queelius/longecho) - Archive orchestration
+- [longshade](https://github.com/queelius/longshade) - Persona synthesis (spec)
 
 ## Documentation
 
@@ -47,7 +51,7 @@ These posts also appear on [metafunctor.com](https://metafunctor.com/series/the-
 
 ## Author
 
-**Alex Towell** — [metafunctor.com](https://metafunctor.com) — [queelius@gmail.com](mailto:queelius@gmail.com)
+**Alex Towell** | [metafunctor.com](https://metafunctor.com) | [queelius@gmail.com](mailto:queelius@gmail.com)
 
 ## License
 

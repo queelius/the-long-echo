@@ -1,54 +1,69 @@
 ---
-title: "The Long Echo"
-description: "On digital legacy, graceful degradation, and designing systems that outlast their creators"
+associations:
+  featured:
+  - slug: longecho
+    type: project
+  links:
+  - name: GitHub Organization
+    url: https://github.com/long-echo
+  papers:
+  - dagshell
+  - dreamlog-paper
+  projects:
+  - ctk
+  - btk
+  - ebk
+  - mtk
+  - ptk
+  - longshade
+  - jot
+  - repoindex
+  - crier
+  - src2md
+  writing: []
+description: Digital preservation tools and philosophy. Graceful degradation, plain-text
+  archival, and building systems that outlast their creators.
+title: The Long Echo
 ---
 
 *Not resurrection. Not immortality. Just love that still responds.*
 
-This series explores a question that became urgent after a cancer diagnosis: **What survives us, and how do we design for it?**
+I have stage 4 cancer. That is part of why I build these tools.
 
-The Long Echo is both a philosophy and a practice. The philosophy: our digital artifacts—conversations, code, writing, bookmarks—can be preserved in ways that remain accessible and meaningful across decades, even when the original software is gone. The practice: a set of tools and principles for making it happen.
+I build tools for preserving digital artifacts: conversations, bookmarks, photos, email, ebooks. The tools share a philosophy: your data should be readable in fifty years without the original software.
 
-## The Core Insight: Graceful Degradation
+## Graceful Degradation
 
-Systems should fail progressively, not catastrophically:
+Every tool in this ecosystem exports to formats that work at multiple levels:
 
 ```
-Level 1: Full functionality  → Rich apps with semantic search and beautiful UIs
-Level 2: Database queries    → SQLite direct queries (app gone, database remains)
-Level 3: File search         → grep through JSONL files (just text tools)
-Level 4: Human reading       → Markdown, HTML (readable without any tools)
-Level 5: Ultimate fallback   → Plain text in notepad
+Level 1: Full app        → Semantic search, rich UI
+Level 2: Database        → SQLite queries (app gone, database remains)
+Level 3: File search     → grep through JSONL (just text tools)
+Level 4: Human reading   → Markdown, HTML (no tools needed)
+Level 5: Fallback        → Plain text in any editor
 ```
 
-Every tool in the Long Echo ecosystem exports to formats that work at every level. When your children want to search your conversations in 2074, they won't need the original software. They won't even need the original database. Plain text survives everything.
+If the software disappears, the data does not. If the database corrupts, the JSONL files remain. If everything fails, the plain text survives.
 
-## What This Series Contains
+## The Toolkit
 
-**Philosophy & Motivation**
-- Why mortality changes optimization priorities
-- The difference between resurrection and preservation
-- Value imprinting: encoding philosophy into code that outlasts you
+**Archive tools**, each handling one domain:
 
-**The Toolkit**
-- **CTK** (Conversation Toolkit): Preserve AI conversations across all platforms
-- **BTK** (Bookmark Toolkit): Your intellectual breadcrumb trail
-- **EBK** (Ebook Toolkit): Your reading library, exportable forever
+- **CTK**: AI conversations across all platforms
+- **BTK**: Bookmarks with hierarchical tags and semantic search
+- **EBK**: Ebook libraries
+- **MTK**: Email archives with person resolution
+- **PTK**: Photo libraries with content-hash identification
 
-**Philosophical Fiction**
-- *The Policy*: What happens when AI alignment meets irreversible decisions
-- *Echoes of the Sublime*: When patterns exceed human bandwidth
-- *The Mocking Void*: Computational incompleteness as cosmic horror
+**Orchestration**:
 
-**Foundational Ideas**
-- API design as value imprinting
-- Open source as continuability framework
-- Reproducibility as respect for future readers
+- **Long Echo**: The layer connecting all tools, shared export format (ECHO)
+- **Jot**: CLI notes and journal
+- **Longshade**: Persona synthesis from personal archives. Spec only, not yet implemented. The philosophical destination of the whole project.
 
-## The Constraint That Clarifies
+## What This Series Covers
 
-A cancer diagnosis is, among other things, an optimization constraint. It doesn't change what matters—it clarifies it. These posts and tools emerged from that clarity:
+The posts in this series range from tool announcements and technical walkthroughs to philosophical pieces about digital legacy, identity preservation, and what it means to build an echo of yourself from your own data.
 
-> The goal isn't to live forever through code. It's to leave work that others can continue, understand, and build upon. Not digital immortality—just good engineering for an uncertain future.
-
-The echo doesn't need to be loud. It just needs to be findable.
+Some of the fiction I write connects here too. The novels explore what happens when AI systems carry patterns of people who are gone, which is the same question longshade asks, just dramatized.

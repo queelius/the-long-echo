@@ -1,29 +1,36 @@
 ---
-title: "BTK: Modern Database-First Bookmark Manager"
+title: 'BTK: Modern Database-First Bookmark Manager'
 date: 2025-11-30
 draft: false
-series: ["the-long-echo"]
+series:
+- the-long-echo
 series_weight: 24
-tags: ['Python', 'bookmarks', 'SQLite', 'NLP', 'CLI', 'productivity']
-categories: ['software-development', 'productivity']
-description: "A modern, database-first bookmark manager with powerful features for organizing, searching, and analyzing your bookmarks."
+tags:
+- Python
+- bookmarks
+- SQLite
+- NLP
+- CLI
+- productivity
+categories:
+- software-development
+- productivity
+description: A database-first bookmark manager with NLP auto-tagging, full-text search, and content caching.
+linked_project:
+- btk
 ---
+**[BTK](https://pypi.org/project/bookmark-tk/)** (Bookmark Toolkit) is a bookmark manager that treats bookmarks as structured data rather than flat lists. It sits on top of SQLite with NLP-powered auto-tagging and brings database-level querying to personal bookmark management.
 
-**[BTK](https://pypi.org/project/bookmark-tk/)** (Bookmark Toolkit) is a modern bookmark manager that treats bookmarks as structured data rather than flat lists. Built on SQLite with NLP-powered auto-tagging, it brings database-level power to personal bookmark management.
+## Why I Built This
 
-## Why Another Bookmark Manager?
-
-Browser bookmark managers are:
+Browser bookmark managers are terrible:
 - **Flat**: No rich metadata, limited organization
 - **Siloed**: Each browser has its own format
 - **Ephemeral**: Pages go offline, links break
 
-BTK fixes this:
-- **Structured**: SQLite database with full-text search
-- **Universal**: Import from Chrome, Firefox, Safari, HTML, JSON
-- **Persistent**: Caches content for offline access
+Your bookmarks represent years of intellectual curation. Articles that shaped your thinking, tutorials that taught you skills, references you return to over and over. They deserve better than ephemeral browser sync.
 
-Your bookmarks represent years of intellectual curation—articles that shaped your thinking, tutorials that taught you skills, references you return to again and again. They deserve better than ephemeral browser sync. BTK is part of the [Long Echo](/post/2025-01-long-echo/) toolkit: tools for preserving your digital intellectual life in formats you control.
+BTK is part of the [Long Echo](/post/2025-01-long-echo/) toolkit: tools for preserving your digital intellectual life in formats you control.
 
 ## Quick Start
 
@@ -45,7 +52,7 @@ btk export bookmarks.html html --hierarchical
 
 ## Interactive Shell
 
-BTK includes a powerful shell with a virtual filesystem interface:
+BTK includes a shell with a virtual filesystem interface:
 
 ```
 $ btk shell
@@ -73,10 +80,12 @@ btk:/bookmarks/4095$ tag data-science machine-learning
 ```
 
 Shell features:
-- **Virtual filesystem** - Navigate bookmarks like files and directories
-- **Hierarchical tags** - Tags like `programming/python/django` create navigable folders
-- **Context-aware commands** - Commands adapt based on your current location
-- **Unix-like interface** - Familiar `cd`, `ls`, `pwd`, `mv`, `cp` commands
+- **Virtual filesystem** -- Navigate bookmarks like files and directories
+- **Hierarchical tags** -- Tags like `programming/python/django` create navigable folders
+- **Context-aware commands** -- Commands adapt based on your current location
+- **Unix-like interface** -- Familiar `cd`, `ls`, `pwd`, `mv`, `cp` commands
+
+I wanted something that feels like navigating a filesystem because that is the mental model I already have for hierarchical data. If you live in the terminal, this should feel natural.
 
 ## Hierarchical Tags
 
@@ -112,6 +121,8 @@ btk content auto-tag --id 42 --apply
 btk content auto-tag --all --workers 100
 ```
 
+The auto-tagger looks at the cached page content and suggests tags from your existing taxonomy. It is not perfect, but it handles the 80% case of "this page is clearly about Python web frameworks" well enough to save significant manual effort.
+
 ## Content Caching
 
 Store page content for offline access and full-text search:
@@ -132,6 +143,8 @@ btk content view 42 --html             # Open HTML in browser
 # Search cached content
 btk bookmark search "specific phrase" --in-content
 ```
+
+This is the feature that motivated the whole project. I was tired of bookmarking pages that disappeared six months later. BTK caches the content locally so your bookmarks survive link rot.
 
 ## PDF Support
 
@@ -227,7 +240,3 @@ pip install bookmark-tk
 
 - **PyPI**: [pypi.org/project/bookmark-tk/](https://pypi.org/project/bookmark-tk/)
 - **GitHub**: [github.com/queelius/bookmark-tk](https://github.com/queelius/bookmark-tk)
-
----
-
-*BTK: Your bookmarks deserve better than a flat list in a browser sidebar.*

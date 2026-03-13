@@ -15,10 +15,10 @@ categories:
   - Projects
   - Philosophy
 linked_project: [btk]
-description: "A concrete demonstration of graceful degradation: exporting years of bookmarks to a self-contained HTML app that works offline, forever."
+description: "Graceful degradation made concrete: years of bookmarks exported to a self-contained HTML app that works offline, forever."
 ---
 
-I wrote about [Long Echo](/post/2025-01-long-echo/) and the [Long Echo Toolkit](/post/2025-12-16-long-echo-toolkit/) earlier. Today I want to show what it actually looks like in practice.
+I wrote about [Long Echo](/post/2025-01-long-echo/) and the [Long Echo Toolkit](/post/2025-12-16-long-echo-toolkit/) earlier. Here's what it actually looks like.
 
 **[View the live demo: 5,874 bookmarks in a single file](/bookmarks.html)**
 
@@ -30,7 +30,7 @@ btk --db bookmarks.db export bookmarks.html \
     --query "(reachable != 0 OR reachable IS NULL)"
 ```
 
-**Result**: 5,874 bookmarks in a single 4MB HTML file.
+Result: 5,874 bookmarks in a single 4MB HTML file.
 
 ## What You Get
 
@@ -40,8 +40,8 @@ The `html-app` export includes:
 
 - **Search**: Full-text filtering across titles, URLs, descriptions, tags
 - **Multiple views**: Grid, list, table layouts
-- **Tag sidebar**: Navigate by hierarchical tags
-- **Dark mode**: Toggle with a button
+- **Tag sidebar**: Hierarchical tag navigation
+- **Dark mode**: Toggle button
 - **Keyboard shortcuts**: Navigate without a mouse
 - **Sorting**: By date, title, visits, stars
 - **Filtering**: By starred, archived, has-content
@@ -50,7 +50,7 @@ Everything is embedded: CSS, JavaScript, all 5,874 bookmark records as JSON. One
 
 ## Why This Matters
 
-This is graceful degradation made concrete:
+Graceful degradation, concretely:
 
 | Level | What Works | Requirements |
 |-------|-----------|--------------|
@@ -59,11 +59,11 @@ This is graceful degradation made concrete:
 | **3. HTML App** | Visual browsing, search, filtering | Any browser |
 | **4. View source** | Raw JSON data, greppable | Text editor |
 
-The HTML app is level 3—it works even when BTK is gone, even when Python is gone. Someone in 2074 can double-click the file and browse my bookmarks.
+The HTML app is level 3. It works when BTK is gone, when Python is gone. Someone in 2074 can double-click the file and browse my bookmarks.
 
 ## The Data Inside
 
-If you view source, you'll find:
+View source and you'll find:
 
 ```javascript
 const BOOKMARKS = [
@@ -101,7 +101,7 @@ btk import bookmarks.html --format html
 btk export archive.html --format html-app
 ```
 
-You now have a permanent, searchable copy of your bookmarks that will outlive every cloud service.
+You now have a permanent, searchable copy of your bookmarks that will outlive every cloud service you currently depend on.
 
 ## Links
 
@@ -109,7 +109,3 @@ You now have a permanent, searchable copy of your bookmarks that will outlive ev
 - **BTK**: [github.com/queelius/btk](https://github.com/queelius/btk)
 - **Long Echo Philosophy**: [Long Echo: Designing for Digital Resilience](/post/2025-01-long-echo/)
 - **Full Toolkit**: [The Long Echo Toolkit](/post/2025-12-16-long-echo-toolkit/)
-
----
-
-*Your bookmarks are worth more than "hope Chrome sync doesn't break." Export them to something permanent.*

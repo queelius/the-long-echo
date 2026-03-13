@@ -17,12 +17,12 @@ categories:
   - Projects
   - Philosophy
 linked_project: [ptk, mtk, ctk, btk, ebk]
-description: "Expanding the Long Echo ecosystem with photo and mail archival. Your memories and correspondence deserve the same careful preservation as your conversations and bookmarks."
+description: "Expanding the Long Echo ecosystem with photo and mail archival. Your memories and correspondence deserve the same preservation as your conversations and bookmarks."
 ---
 
 The [Long Echo toolkit](/post/2025-12-16-long-echo-toolkit/) now covers conversations, bookmarks, and ebooks. But two of the most emotionally significant categories of personal data remain: **photos** and **mail**.
 
-Both share a troubling pattern: they're scattered across devices and cloud services, organized by date rather than meaning, and vulnerable to platform disappearance. They deserve better.
+Both share a troubling pattern: scattered across devices and cloud services, organized by date rather than meaning, vulnerable to platform disappearance. They deserve better.
 
 ## The Expanding Ecosystem
 
@@ -45,11 +45,11 @@ Photos are the most emotionally valuable digital artifacts most people have. The
 
 Your photo library is probably:
 
-- **Scattered** — Phone, old phones, cloud services, camera imports, messaging app saves
-- **Organized by date** — Not by who's in them, where they were taken, or what they mean
-- **Cloud-dependent** — Google Photos, iCloud, Amazon Photos—what happens when you switch?
-- **Unsearchable by content** — "Find photos of mom at the beach" isn't possible
-- **Missing context** — Only you know why that blurry photo matters
+- **Scattered**: Phone, old phones, cloud services, camera imports, messaging app saves
+- **Organized by date**: Not by who's in them, where they were taken, or what they mean
+- **Cloud-dependent**: Google Photos, iCloud, Amazon Photos. What happens when you switch?
+- **Unsearchable by content**: "Find photos of mom at the beach" isn't possible
+- **Missing context**: Only you know why that blurry photo matters
 
 ### The Vision
 
@@ -119,15 +119,15 @@ sqlite3 photos.db "
 "
 ```
 
-The database stores metadata, face embeddings, captions, and organization. The actual photo files stay in place or are copied to a managed library—your choice.
+The database stores metadata, face embeddings, captions, and organization. The actual photo files stay in place or are copied to a managed library, your choice.
 
 ### Graceful Degradation
 
-1. **Full ptk** → Face search, semantic queries, smart albums
-2. **SQLite queries** → Find any photo by metadata
-3. **EXIF data** → Dates and locations in the files themselves
-4. **Directory structure** → Browse by year/month even with nothing installed
-5. **The photos themselves** → JPEG will always be viewable
+1. **Full ptk**: Face search, semantic queries, smart albums
+2. **SQLite queries**: Find any photo by metadata
+3. **EXIF data**: Dates and locations in the files themselves
+4. **Directory structure**: Browse by year/month even with nothing installed
+5. **The photos themselves**: JPEG will always be viewable
 
 ## MTK: Mail Toolkit
 
@@ -137,10 +137,10 @@ Your email archive is one of the most complete records of your relationships and
 
 Your email is probably:
 
-- **Trapped in cloud services** — Gmail, Outlook, corporate servers
-- **Searchable only by keywords** — Not by meaning or relationship
-- **A privacy minefield** — Contains everything, shared with everyone
-- **Vulnerable to deletion** — One account closure and decades vanish
+- **Trapped in cloud services**: Gmail, Outlook, corporate servers
+- **Searchable only by keywords**: Not by meaning or relationship
+- **A privacy minefield**: Contains everything, shared with everyone
+- **Vulnerable to deletion**: One account closure and decades vanish
 
 ### The Vision
 
@@ -199,12 +199,12 @@ notmuch search tag:important  # Still works
 
 Email requires more careful handling than photos or bookmarks. mtk is designed with privacy as a core concern:
 
-- **Local-only by default** — No cloud sync, no external APIs without explicit action
-- **Selective export** — Export only what you choose, with redaction options
-- **Encryption support** — Work with GPG-encrypted messages
-- **Relationship-aware filtering** — Export only threads with specific people
+- **Local-only by default**: No cloud sync, no external APIs without explicit action
+- **Selective export**: Export only what you choose, with redaction options
+- **Encryption support**: Work with GPG-encrypted messages
+- **Relationship-aware filtering**: Export only threads with specific people
 
-The goal isn't to expose your email to AI—it's to make your own archive searchable and preservable while maintaining control.
+The goal isn't to expose your email to AI. It's to make your own archive searchable and preservable while maintaining control.
 
 ## Shared Architecture
 
@@ -254,7 +254,7 @@ With ptk and mtk, Long Echo covers the major categories of personal digital life
 | Photos | ptk | Memories, faces, places, moments |
 | Mail | mtk | Correspondence, relationships, decisions |
 
-Each tool is independent—use only what you need. But together, they form a comprehensive personal archive that you own, can query, and can preserve for decades.
+Each tool is independent. Use only what you need. But together, they form a comprehensive personal archive that you own, can query, and can preserve for decades.
 
 ## Status
 

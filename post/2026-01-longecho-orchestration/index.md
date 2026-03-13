@@ -1,5 +1,5 @@
 ---
-title: "Long Echo Comes Alive: From Philosophy to Implementation"
+title: "Long Echo Comes Alive: From Philosophy to Orchestration"
 date: 2026-01-20
 draft: false
 series: ["the-long-echo"]
@@ -18,139 +18,175 @@ linked_project: [longecho, ctk, btk, ebk]
 description: "longecho evolves from specification to implementation with build, serve, and manifest features."
 ---
 
-A year ago, I wrote about [Long Echo](/post/2025-01-long-echo/)—a philosophy for preserving AI conversations across decades. The core insight was graceful degradation: design for the worst case, then add convenience layers.
+A year ago, I wrote about [Long Echo](/post/2025-01-long-echo/) as a philosophy for preserving AI conversations across decades. The key insight was graceful degradation: design archives that work progressively even as technology disappears.
 
-At the time, longecho was documentation only. CTK already solved the hard problems of conversation parsing, storage, and export. Long Echo contributed the philosophical framework.
+That philosophy has become a tool.
 
-That's changed. longecho is now a working tool.
+## From Philosophy to Tool
 
-## What longecho Does
+The original Long Echo was intentionally not code. It was a set of principles documented in CTK's repository. The hard problems of conversation parsing, storage, and search were already solved by toolkits like CTK, BTK, and EBK.
+
+What was missing was the unification layer. Each toolkit exports its own ECHO-compliant archive, but combining them into a single browsable experience required manual work. That's what longecho now handles.
+
+## What longecho Does Now
+
+longecho is a CLI tool with five capabilities:
 
 ```bash
-# Check if a directory is ECHO-compliant
-longecho check ~/my-archive/
+longecho check ~/my-data/       # Validate ECHO compliance
+longecho discover ~/            # Find ECHO sources
+longecho search ~/ "query"      # Search README descriptions
+longecho build ~/my-archive/    # Generate static site
+longecho serve ~/my-archive/    # Preview locally via HTTP
+```
 
-# Find ECHO sources under a path
-longecho discover ~/
+The `check`, `discover`, and `search` commands existed in the original specification. What's new is `build` and `serve`, the orchestration layer.
 
-# Build a static site from archive(s)
+### Building a Unified Site
+
+The `build` command takes a hierarchical archive and generates a static site:
+
+```bash
 longecho build ~/my-archive/
-
-# Preview locally
-longecho serve ~/my-archive/
 ```
 
-The check and discover commands were always planned. But build and serve are new—they turn longecho from a validator into something that generates value.
+This produces a `site/` directory with:
 
-## The Build Command
+- An index page linking to all sub-archives
+- Navigation between sources
+- Automatic linking to existing sub-site builds
 
-`longecho build` takes an ECHO-compliant archive and generates a static browsable site:
+If a sub-archive already has its own `site/` directory (like CTK's exports), longecho links to it. Use `--bundle` to copy everything into a portable, self-contained site.
+
+### Live Preview
+
+The `serve` command provides local HTTP preview:
 
 ```bash
-$ longecho build ~/life-archive/
-Building site for: /home/alex/life-archive
-Found 3 sources: conversations, bookmarks, blog
-→ Generated site at ~/life-archive/site/
+longecho serve ~/my-archive/ --port 8000
 ```
 
-The output is pure static HTML/JS/CSS. No server required. Works offline. Can be hosted anywhere—GitHub Pages, a USB drive, or just opened directly in a browser.
+It builds the site if needed, then serves it for browser viewing.
 
-## Manifests
+## The Manifest
 
-While ECHO compliance only requires a README, the build command works better with manifests. A `manifest.json` at the archive root provides machine-readable metadata:
+ECHO compliance requires only a README. But for machine-readable metadata, longecho supports an optional manifest:
 
-```json
-{
-  "version": "1.0",
-  "name": "Alex's Data Archive",
-  "description": "Personal data archive",
-  "sources": [
-    {"path": "conversations/", "order": 1},
-    {"path": "bookmarks/", "order": 2},
-    {"path": "blog/", "order": 3}
-  ]
-}
+```yaml
+version: "1.0"
+name: "Alex's Data Archive"
+description: "Personal data archive"
+sources:
+  - path: "conversations/"
+    order: 1
+  - path: "bookmarks/"
+    order: 2
+  - path: "ebooks/"
+    order: 3
 ```
 
-Without a manifest, longecho auto-discovers sub-archives by looking for README files. With a manifest, you control exactly what appears and in what order.
+The manifest enables:
 
-This is a hybrid approach: manifest overrides auto-discovery, but neither is required.
+- **Explicit ordering** of sources in generated sites
+- **Selective inclusion** via the `browsable` flag
+- **Override names** for cleaner presentation
+- **Icon hints** for UI presentation
 
-## Hierarchical Archives
+Without a manifest, longecho auto-discovers sub-archives by looking for directories with README files. The manifest provides explicit control when you need it.
 
-The real power comes from nesting. Each toolkit—ctk, btk, ebk—exports ECHO-compliant archives with their own sites:
+## Hierarchical Archives in Practice
+
+My actual archive structure looks like this:
 
 ```
-life-archive/
+longecho-archive/
 ├── README.md
-├── manifest.json
-├── conversations/           # ctk export
+├── manifest.yaml
+├── conversations/           # CTK export
 │   ├── README.md
-│   ├── manifest.json
-│   ├── data.db
+│   ├── conversations.db
 │   └── site/
-├── bookmarks/               # btk export
+├── bookmarks/               # BTK export
 │   ├── README.md
-│   ├── manifest.json
-│   ├── data.db
+│   ├── bookmarks.db
 │   └── site/
-├── ebooks/                  # ebk export
-│   ├── README.md
-│   └── library.db
-└── site/                    # Unified site (generated)
-    └── index.html
+└── ebooks/                  # EBK export
+    ├── README.md
+    ├── ebooks.db
+    └── site/
 ```
 
-Each sub-archive is independently ECHO-compliant. You can extract `conversations/` and it works on its own. But `longecho build` at the top level generates a unified site that ties everything together.
+Each subdirectory is independently ECHO-compliant:
 
-## What This Enables
+- **conversations/** contains my AI conversation history from ChatGPT, Claude, and others
+- **bookmarks/** contains years of saved links with hierarchical tags
+- **ebooks/** contains my ebook library with extracted highlights
 
-The original Long Echo post imagined a USB drive someone could find in 2074:
+Running `longecho build` creates a unified `site/` at the root that links everything together. Each toolkit's export is preserved exactly. longecho doesn't modify the underlying data.
 
-> *If someone found this USB drive in 2074, could they:*
-> 1. *Figure out what it is?* ✓ README.md explains everything
-> 2. *Read the content?* ✓ Plain text and HTML work in any system
-> 3. *Search for topics?* ✓ grep works on text files
-> 4. *Rebuild full functionality?* ✓ Source code and docs included
+## ECHO Compliance in Practice
 
-Now there's a `site/` directory with a browsable interface. Future humans don't need to rebuild anything—they just open `index.html`.
+The minimal requirement for ECHO compliance is:
 
-## The Philosophy Holds
-
-The implementation didn't change the philosophy. ECHO compliance is still just:
-
-1. A README at the root
+1. A `README.md` or `README.txt` at the root
 2. Data in durable formats
 
-That's it. Manifests are optional. Sites are optional. Everything gracefully degrades.
+That's it. No manifest, no special structure, no version numbers.
 
-What changed is that there's now a tool to generate the convenience layers automatically. The static site is a presentation layer over the raw data—the SQLite databases, JSONL exports, and markdown files remain the source of truth.
+The toolkits naturally satisfy this:
 
-## What's Next
+- **CTK** exports with README explaining the SQLite schema
+- **BTK** exports with README describing bookmark format
+- **EBK** exports with README documenting ebook metadata
 
-The build command currently generates basic navigation and links to sub-archive sites. Future improvements:
+longecho doesn't impose additional requirements. It works with what the toolkits already produce.
 
-- **Unified search** — Search across all sources from one interface
-- **Better site generation** — Improved templates for sources without their own sites
-- **Theme support** — Consistent visual styling across sub-archives
+## Why This Matters
 
-But even as-is, longecho bridges the gap between scattered toolkit exports and a unified browsable archive.
+The philosophy hasn't changed. Archives should work without tools:
 
-## Try It
+| If you have... | You can still... |
+|----------------|------------------|
+| longecho | Browse a unified site |
+| A web browser | Open any toolkit's `site/index.html` |
+| SQLite | Query the databases directly |
+| A text editor | Read the README files |
 
-```bash
-pip install longecho
+What's new is convenience. Instead of manually copying files and editing HTML, `longecho build` generates the unified view automatically. But the underlying archive remains simple: directories with README files and durable-format data.
 
-# Check if you have ECHO sources
-longecho discover ~/
+## Implementation Notes
 
-# Build a unified site
-longecho build ~/my-archive/
-longecho serve ~/my-archive/
-```
+longecho is written in Python with Typer for the CLI and Jinja2 for HTML templates. The codebase is small (under 1000 lines) and reasonably well-tested (78% coverage, 114 tests).
 
-The philosophy was always about preservation across decades. Now there's implementation to match.
+Key design decisions:
+
+- **Link by default, bundle optionally**: Generated sites link to sub-archive sites rather than copying them. Keeps the output small and avoids duplication. The `--bundle` flag creates a fully portable copy when needed.
+
+- **Auto-discovery with override**: Without a manifest, longecho finds ECHO sources automatically. With a manifest, you get explicit control.
+
+- **No data transformation**: longecho never modifies the underlying data. It generates HTML that links to what already exists.
+
+## Status and What's Next
+
+longecho is alpha quality with core functionality working. The test suite covers the major paths, and I'm using it for my own archives.
+
+What might come next:
+
+- **Search integration**: Cross-archive search combining all toolkit indexes
+- **Theme support**: Custom templates for generated sites
+- **Watch mode**: Rebuild automatically when sources change
+
+But the core is stable: check, discover, build, serve. The philosophy is now a tool.
 
 ---
 
-*This is part of [The Long Echo](/series/the-long-echo/) series about designing systems that outlive their creators.*
+*The archive is not a monument. It is a conversation that outlasts its participants.*
+
+---
+
+## Resources
+
+- **longecho**: [github.com/queelius/longecho](https://github.com/queelius/longecho)
+- **CTK**: [github.com/queelius/ctk](https://github.com/queelius/ctk)
+- **BTK**: [github.com/queelius/btk](https://github.com/queelius/btk)
+- **Original Long Echo post**: [Long Echo: Designing for Digital Resilience](/post/2025-01-long-echo/)
