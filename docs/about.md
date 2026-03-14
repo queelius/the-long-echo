@@ -18,7 +18,8 @@ Source: [github.com/queelius/the-long-echo](https://github.com/queelius/the-long
 
 **Data preservation:**
 
-- **[CTK](https://github.com/queelius/ctk)** (Conversation Toolkit): AI conversations from all platforms, tree-aware storage, multi-format export
+- **[memex](https://github.com/queelius/memex)**: Conversation knowledge base, MCP-first architecture, enrichments and provenance tracking
+- **[CTK](https://github.com/queelius/ctk)** (Conversation Toolkit): AI conversations from all platforms, tree-aware storage (predecessor to memex)
 - **[BTK](https://github.com/queelius/btk)** (Bookmark Toolkit): Database-first bookmarks with hierarchical tags, content caching, NLP auto-tagging
 - **[EBK](https://github.com/queelius/ebk)** (Ebook Toolkit): eBook metadata, full-text search, AI enrichment, semantic search
 - **[PTK](https://github.com/queelius/ptk)** (Photo Toolkit): SHA256 dedup, AI annotation, multi-source import

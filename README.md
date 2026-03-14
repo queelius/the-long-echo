@@ -30,7 +30,8 @@ Systems should fail progressively, not catastrophically. Every tool exports to f
 
 ## Related Projects
 
-- [CTK](https://github.com/queelius/ctk) - Conversation Toolkit
+- [memex](https://github.com/queelius/memex) - Conversation knowledge base (successor to CTK)
+- [CTK](https://github.com/queelius/ctk) - Conversation Toolkit (predecessor)
 - [BTK](https://github.com/queelius/btk) - Bookmark Toolkit
 - [EBK](https://github.com/queelius/ebk) - eBook Toolkit
 - [PTK](https://github.com/queelius/ptk) - Photo Toolkit

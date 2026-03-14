@@ -50,7 +50,8 @@ If the software disappears, the data does not. If the database corrupts, the JSO
 
 **Archive tools**, each handling one domain:
 
-- **CTK**: AI conversations across all platforms
+- **memex**: Conversation knowledge base (MCP-first, cleaner successor to CTK)
+- **CTK**: AI conversations across all platforms (predecessor to memex)
 - **BTK**: Bookmarks with hierarchical tags and semantic search
 - **EBK**: Ebook libraries
 - **MTK**: Email archives with person resolution
