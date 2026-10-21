@@ -9,9 +9,7 @@ series: ["the-long-echo"]
 series_weight: 1
 ---
 
-> **Update (January 2026)**: Since this post was written, longecho has evolved
-> from specification to implementation. See [Long Echo Comes Alive](/post/2026-01-longecho-orchestration/)
-> for the current state including `build`, `serve`, and manifest features.
+> **Update (October 2026)**: longecho is now a small tool with its own [documentation](https://queelius.github.io/longecho/), which is the current word on how it works. Two ideas here changed. There is no `START_HERE.txt`: the README at the top of the archive is the start-here note, written for someone who has none of your tools. And the ladder of formats below turned out to be the ladder of readers seen from the other end, so the docs now show them as [one table](https://queelius.github.io/longecho/). CTK's successor is [llm-memex](https://github.com/queelius/llm-memex).
 
 ## Not Resurrection. Not Immortality.
 

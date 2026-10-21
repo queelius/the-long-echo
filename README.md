@@ -37,7 +37,7 @@ Systems should fail progressively, not catastrophically. Every tool exports to f
 - [PTK](https://github.com/queelius/ptk) - Photo Toolkit
 - [MTK](https://github.com/queelius/mtk) - Mail Toolkit
 - [JOT](https://github.com/queelius/jot) - Plaintext journal
-- [longecho](https://github.com/queelius/longecho) - Archive orchestration
+- [longecho](https://github.com/queelius/longecho) - Durable archive convention and checker
 - [longshade](https://github.com/queelius/longshade) - Persona synthesis (spec)
 
 ## Documentation

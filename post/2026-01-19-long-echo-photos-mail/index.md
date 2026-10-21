@@ -20,6 +20,8 @@ linked_project: [ptk, mtk, ctk, btk, ebk]
 description: "Expanding the Long Echo ecosystem with photo and mail archival. Your memories and correspondence deserve the same preservation as your conversations and bookmarks."
 ---
 
+> **Update (October 2026)**: PTK and MTK are now [photo-memex](https://github.com/queelius/photo-memex) and [mail-memex](https://github.com/queelius/mail-memex). The `--format longecho` exports below were replaced by arkiv exports (a README, JSONL files, and a schema file), which is the shape longecho reads. There is no separate ECHO format. See the [longecho docs](https://queelius.github.io/longecho/).
+
 The [Long Echo toolkit](/post/2025-12-16-long-echo-toolkit/) now covers conversations, bookmarks, and ebooks. But two of the most emotionally significant categories of personal data remain: **photos** and **mail**.
 
 Both share a troubling pattern: scattered across devices and cloud services, organized by date rather than meaning, vulnerable to platform disappearance. They deserve better.

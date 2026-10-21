@@ -22,6 +22,8 @@ linked_project:
   - longshade
 ---
 
+> **Update (October 2026)**: "ECHO-compliant" in this post is now "longecho-compliant": a README plus data in durable formats. PTK and MTK are now [photo-memex](https://github.com/queelius/photo-memex) and [mail-memex](https://github.com/queelius/mail-memex). See the [longecho docs](https://queelius.github.io/longecho/).
+
 *The ghost is not you. But it echoes you.*
 
 What survives beyond scattered archives? Beyond exported conversations and curated bookmarks? The stuff we never think to preserve: the photos that show how you see the world. The correspondence that maps who matters to you.

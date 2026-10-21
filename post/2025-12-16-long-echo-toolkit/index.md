@@ -19,6 +19,8 @@ description: "Three CLI tools for preserving your digital intellectual life: con
 canonical_url: https://metafunctor.com/post/2025-12-16-long-echo-toolkit/
 ---
 
+> **Update (October 2026)**: These tools have since been rebuilt as the memex family: CTK is now [llm-memex](https://github.com/queelius/llm-memex), BTK is [bookmark-memex](https://github.com/queelius/bookmark-memex), and EBK is [book-memex](https://github.com/queelius/book-memex). The `START_HERE.txt` in the archive layout below is retired; the top-level README does that job. Current details are in the [longecho docs](https://queelius.github.io/longecho/).
+
 Earlier this year I wrote about [Long Echo](/post/2025-01-long-echo/), a philosophy for preserving AI conversations in ways that stay accessible across decades. The core idea was **graceful degradation**: systems that fail progressively, not catastrophically.
 
 Since then I've built out three tools that apply this thinking to all personal digital content, not just conversations. Bookmarks, books, and AI chats. Together they form a system for managing the stuff you actually think with.

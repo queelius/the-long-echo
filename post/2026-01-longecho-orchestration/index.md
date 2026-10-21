@@ -18,6 +18,8 @@ linked_project: [longecho, ctk, btk, ebk]
 description: "longecho evolves from specification to implementation with build, serve, and manifest features."
 ---
 
+> **Update (October 2026)**: Much of this post describes a design that did not survive. longecho does not orchestrate other tools, there is no `manifest.yaml`, and "ECHO-compliant" is now "longecho-compliant". `discover` and `search` became `query`, and `serve` is gone: `build` writes a single-file site that opens without a server. What remained is smaller: a README plus durable formats in every directory, and a tool that checks that, searches across it, and builds a browsable site over it. The [longecho docs](https://queelius.github.io/longecho/) describe what exists now.
+
 A year ago, I wrote about [Long Echo](/post/2025-01-long-echo/) as a philosophy for preserving AI conversations across decades. The key insight was graceful degradation: design archives that work progressively even as technology disappears.
 
 That philosophy has become a tool.

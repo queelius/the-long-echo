@@ -18,6 +18,8 @@ linked_project: [btk]
 description: "Graceful degradation made concrete: years of bookmarks exported to a self-contained HTML app that works offline, forever."
 ---
 
+> **Update (October 2026)**: BTK is now [bookmark-memex](https://github.com/queelius/bookmark-memex), so the commands below are from the BTK era. For how longecho fits around exports like this one, see the [longecho docs](https://queelius.github.io/longecho/).
+
 I wrote about [Long Echo](/post/2025-01-long-echo/) and the [Long Echo Toolkit](/post/2025-12-16-long-echo-toolkit/) earlier. Here's what it actually looks like.
 
 **[View the live demo: 5,874 bookmarks in a single file](/bookmarks.html)**
